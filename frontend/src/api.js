@@ -25,7 +25,21 @@ class ApiClient {
         headers['Content-Type'] = 'application/json';
 
         const config = { ...options, headers };
-        const response = await fetch(`${API_BASE}${endpoint}`, config);
+
+        let response;
+        try {
+            response = await fetch(`${API_BASE}${endpoint}`, config);
+            if (response.status === 404 && window.location.port === "8085") {
+                // Fallback to direct backend port if reverse proxy is not loaded or during static dev
+                response = await fetch(`http://localhost:8005/api/v1${endpoint}`, config);
+            }
+        } catch (e) {
+            if (window.location.port === "8085") {
+                response = await fetch(`http://localhost:8005/api/v1${endpoint}`, config);
+            } else {
+                throw e;
+            }
+        }
 
         if (response.status === 401) {
             this.clearTokens();
