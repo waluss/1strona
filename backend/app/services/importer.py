@@ -7,11 +7,12 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 
 from app.models import (
-    Tenant, Tender, TenderNotice, TenderNoticeRevision, ImportRun
+    Tenant, Tender, TenderNotice, TenderNoticeRevision, ImportRun, ContractorProfile
 )
 from app.importers.bzp_client import fetch_all_bzp_notices
 from app.importers.bzp_dto import BzpNoticeDTO
 from app.importers.bzp_normalizer import normalize_bzp_notice, NormalizedNoticeEvent
+from app.scoring.neutral_scorer import score_tender_for_profile
 
 logger = logging.getLogger(__name__)
 
@@ -70,6 +71,11 @@ def import_notices(
         if import_run:
             import_run.status = "RUNNING"
             db.commit()
+
+    active_profiles = db.query(ContractorProfile).filter(
+        ContractorProfile.tenant_id == tenant_id,
+        ContractorProfile.status == "active"
+    ).all()
 
     for item in raw_notices:
         savepoint = db.begin_nested()
@@ -165,6 +171,11 @@ def import_notices(
 
             else:  # SKIP
                 stats["skipped_notices"] += 1
+
+            # 3. Trigger production scoring for active profiles if required
+            if tender and tender.requires_scoring and active_profiles:
+                for profile in active_profiles:
+                    score_tender_for_profile(db, tender, profile, persist=True)
 
             savepoint.commit()
 

@@ -3,17 +3,17 @@ version: '3.8'
 services:
   db:
     image: postgres:16-alpine
-    container_name: tenderflow-db
+    container_name: tenderplatform-db
     environment:
-      POSTGRES_USER: tenderflow
-      POSTGRES_PASSWORD: tenderflow_password
-      POSTGRES_DB: tenderflow
+      POSTGRES_USER: tenderplatform
+      POSTGRES_PASSWORD: tenderplatform_password
+      POSTGRES_DB: tenderplatform
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tenderflow -d tenderflow"]
+      test: ["CMD-SHELL", "pg_isready -U tenderplatform -d tenderplatform"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -22,11 +22,11 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: tenderflow-backend
+    container_name: tenderplatform-backend
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql://tenderflow:tenderflow_password@db:5432/tenderflow
+      DATABASE_URL: postgresql://tenderplatform:tenderplatform_password@db:5432/tenderplatform
       SECRET_KEY: dev_secret_key_change_in_production
       INITIAL_ADMIN_PASSWORD: admin
       ENVIRONMENT: local
@@ -37,7 +37,7 @@ services:
 
   frontend:
     image: nginx:alpine
-    container_name: tenderflow-frontend
+    container_name: tenderplatform-frontend
     ports:
       - "8080:80"
     volumes:
@@ -47,7 +47,7 @@ services:
 
   prometheus:
     image: prom/prometheus:latest
-    container_name: tenderflow-prometheus
+    container_name: tenderplatform-prometheus
     ports:
       - "9090:9090"
     volumes:
@@ -55,7 +55,7 @@ services:
 
   grafana:
     image: grafana/grafana:latest
-    container_name: tenderflow-grafana
+    container_name: tenderplatform-grafana
     ports:
       - "3000:3000"
     environment:

@@ -83,7 +83,7 @@ async function handleRoute() {
 function renderLogin() {
     mainContent.innerHTML = `
         <div style="max-width: 400px; margin: 80px auto;" class="card">
-            <h2 class="card-title" style="text-align: center;">TenderFlow Login</h2>
+            <h2 class="card-title" style="text-align: center;">TenderPlatform Login</h2>
             <div id="login-error" style="color: red; margin-bottom: 10px;" class="hidden"></div>
             <form id="login-form">
                 <div class="form-group">

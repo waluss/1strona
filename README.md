@@ -1,6 +1,6 @@
-# TenderFlow
+# TenderPlatform
 
-TenderFlow is a multi-tenant SaaS platform for aggregating, storing, analyzing, and scoring Polish public procurement notices from the official BZP / e-Zamówienia API.
+TenderPlatform is a multi-tenant SaaS platform for aggregating, storing, analyzing, and scoring Polish public procurement notices from the official BZP / e-Zamówienia API.
 
 ## Features
 
