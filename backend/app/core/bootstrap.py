@@ -21,7 +21,7 @@ def bootstrap_initial_data(db: Session) -> None:
         admin_user = User(
             tenant_id=default_tenant.id,
             username="admin",
-            email="admin@tenderflow.local",
+            email="admin@tenderplatform.local",
             hashed_password=hashed_password,
             is_active=True,
             is_admin=True,

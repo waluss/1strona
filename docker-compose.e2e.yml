@@ -3,15 +3,15 @@ version: '3.8'
 services:
   db:
     image: postgres:16-alpine
-    container_name: tenderflow-e2e-db
+    container_name: tenderplatform-e2e-db
     environment:
-      POSTGRES_USER: tenderflow
-      POSTGRES_PASSWORD: tenderflow_password
-      POSTGRES_DB: tenderflow_e2e
+      POSTGRES_USER: tenderplatform
+      POSTGRES_PASSWORD: tenderplatform_password
+      POSTGRES_DB: tenderplatform_e2e
     ports:
       - "5433:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tenderflow -d tenderflow_e2e"]
+      test: ["CMD-SHELL", "pg_isready -U tenderplatform -d tenderplatform_e2e"]
       interval: 3s
       timeout: 3s
       retries: 5
@@ -20,11 +20,11 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: tenderflow-e2e-backend
+    container_name: tenderplatform-e2e-backend
     ports:
       - "8001:8000"
     environment:
-      DATABASE_URL: postgresql://tenderflow:tenderflow_password@db:5432/tenderflow_e2e
+      DATABASE_URL: postgresql://tenderplatform:tenderplatform_password@db:5432/tenderplatform_e2e
       SECRET_KEY: e2e_secret_key_testing_only
       INITIAL_ADMIN_PASSWORD: admin
       ENVIRONMENT: test
@@ -35,7 +35,7 @@ services:
 
   frontend:
     image: nginx:alpine
-    container_name: tenderflow-e2e-frontend
+    container_name: tenderplatform-e2e-frontend
     ports:
       - "8081:80"
     volumes:

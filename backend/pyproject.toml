@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tenderflow-backend"
+name = "tenderplatform-backend"
 version = "0.1.0"
-description = "TenderFlow SaaS Platform Backend"
+description = "TenderPlatform SaaS Platform Backend"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

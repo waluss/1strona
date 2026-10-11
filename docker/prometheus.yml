@@ -2,7 +2,7 @@ global:
   scrape_interval: 15s
 
 scrape_configs:
-  - job_name: 'tenderflow-backend'
+  - job_name: 'tenderplatform-backend'
     metrics_path: '/metrics'
     static_configs:
       - targets: ['backend:8000']
