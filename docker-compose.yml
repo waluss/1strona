@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: tenderflow-db
+    environment:
+      POSTGRES_USER: tenderflow
+      POSTGRES_PASSWORD: tenderflow_password
+      POSTGRES_DB: tenderflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tenderflow -d tenderflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tenderflow-backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://tenderflow:tenderflow_password@db:5432/tenderflow
+      SECRET_KEY: dev_secret_key_change_in_production
+      INITIAL_ADMIN_PASSWORD: admin
+      ENVIRONMENT: local
+      IMPORT_DRY_RUN_ENABLED: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    image: nginx:alpine
+    container_name: tenderflow-frontend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    depends_on:
+      - backend
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: tenderflow-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: tenderflow-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+
+volumes:
+  postgres_data:
