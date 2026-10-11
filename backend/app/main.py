@@ -34,13 +34,14 @@ app.add_middleware(
 @app.on_event("startup")
 def startup_event():
     try:
-        logger.info("Ensuring database tables exist...")
+        logger.info("Ensuring database tables exist via Base.metadata.create_all...")
         Base.metadata.create_all(bind=engine)
         logger.info("Database tables verified.")
 
         alembic_ini_path = os.path.join(os.path.dirname(__file__), "..", "alembic.ini")
         if os.path.exists(alembic_ini_path):
             alembic_cfg = Config(alembic_ini_path)
+            alembic_cfg.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
             command.stamp(alembic_cfg, "head")
             logger.info("Alembic stamped head.")
     except Exception as e:
