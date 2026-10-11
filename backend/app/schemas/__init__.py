@@ -1,7 +1,7 @@
 import uuid
 from typing import Optional, List, Any, Dict
 from datetime import datetime
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 
 # Auth schemas
 class Token(BaseModel):
@@ -22,6 +22,8 @@ class ChangePasswordRequest(BaseModel):
     new_password: str
 
 class UserResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: uuid.UUID
     tenant_id: uuid.UUID
     username: str
@@ -31,21 +33,17 @@ class UserResponse(BaseModel):
     must_change_password: bool
     created_at: datetime
 
-    class Config:
-        from_attributes = True
-
 # Tenant schemas
 class TenantCreate(BaseModel):
     name: str
 
 class TenantResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: uuid.UUID
     name: str
     is_active: bool
     created_at: datetime
-
-    class Config:
-        from_attributes = True
 
 class UserCreate(BaseModel):
     username: str
@@ -79,6 +77,8 @@ class ProfileUpdate(BaseModel):
     is_default: Optional[bool] = None
 
 class ProfileResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: uuid.UUID
     tenant_id: uuid.UUID
     name: str
@@ -93,11 +93,10 @@ class ProfileResponse(BaseModel):
     is_default: bool
     created_at: datetime
 
-    class Config:
-        from_attributes = True
-
 # Tender schemas
 class TenderResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: uuid.UUID
     tenant_id: uuid.UUID
     source_system: str
@@ -115,10 +114,9 @@ class TenderResponse(BaseModel):
     requires_scoring: bool
     created_at: datetime
 
-    class Config:
-        from_attributes = True
-
 class TenderNoticeResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: uuid.UUID
     tender_id: uuid.UUID
     source_system: str
@@ -131,10 +129,9 @@ class TenderNoticeResponse(BaseModel):
     fetched_at: datetime
     is_delta: bool
 
-    class Config:
-        from_attributes = True
-
 class ScoreResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: uuid.UUID
     tender_id: uuid.UUID
     contractor_profile_id: uuid.UUID
@@ -142,6 +139,3 @@ class ScoreResponse(BaseModel):
     decision: str
     breakdown: Dict[str, Any]
     created_at: datetime
-
-    class Config:
-        from_attributes = True

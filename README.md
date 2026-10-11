@@ -29,10 +29,10 @@ TenderPlatform is a multi-tenant SaaS platform for aggregating, storing, analyzi
    ```
 
 3. **Access Services**:
-   - **Frontend UI**: `http://localhost:8080`
-   - **FastAPI API Docs**: `http://localhost:8000/docs`
-   - **Prometheus**: `http://localhost:9090`
-   - **Grafana**: `http://localhost:3000`
+   - **Frontend UI**: `http://localhost:8085`
+   - **FastAPI API Docs**: `http://localhost:8005/docs`
+   - **Prometheus**: `http://localhost:9095`
+   - **Grafana**: `http://localhost:3005`
 
 4. **Default Admin Login**:
    - **Username**: `admin`

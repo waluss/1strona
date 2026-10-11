@@ -2,6 +2,8 @@ import logging
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+from alembic.config import Config
+from alembic import command
 
 from app.core.config import settings
 from app.db.session import engine, SessionLocal
@@ -10,16 +12,14 @@ from app.api import auth, tenants, profiles, imports, tenders
 
 logger = logging.getLogger(__name__)
 
-# Prometheus metrics
-IMPORT_REQUESTS = Counter("tenderflow_import_requests_total", "Total import requests executed")
-SCORING_REQUESTS = Counter("tenderflow_scoring_requests_total", "Total tender scoring executions")
+IMPORT_REQUESTS = Counter("tenderplatform_import_requests_total", "Total import requests executed")
+SCORING_REQUESTS = Counter("tenderplatform_scoring_requests_total", "Total tender scoring executions")
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
 
-# CORS setup
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -30,6 +30,14 @@ app.add_middleware(
 
 @app.on_event("startup")
 def startup_event():
+    try:
+        logger.info("Running database migrations via Alembic...")
+        alembic_cfg = Config("alembic.ini")
+        command.upgrade(alembic_cfg, "head")
+        logger.info("Database migrations completed.")
+    except Exception as e:
+        logger.error(f"Error running database migrations: {e}")
+
     with SessionLocal() as db:
         try:
             bootstrap_initial_data(db)
@@ -40,7 +48,6 @@ def startup_event():
 def metrics():
     return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
-# Router includes
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
 app.include_router(tenants.router, prefix=f"{settings.API_V1_STR}/tenants", tags=["tenants"])
 app.include_router(profiles.router, prefix=f"{settings.API_V1_STR}/profiles", tags=["profiles"])

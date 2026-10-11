@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: tenderplatform_password
       POSTGRES_DB: tenderplatform
     ports:
-      - "5432:5432"
+      - "5435:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -24,7 +24,7 @@ services:
       dockerfile: Dockerfile
     container_name: tenderplatform-backend
     ports:
-      - "8000:8000"
+      - "8005:8000"
     environment:
       DATABASE_URL: postgresql://tenderplatform:tenderplatform_password@db:5432/tenderplatform
       SECRET_KEY: dev_secret_key_change_in_production
@@ -39,7 +39,7 @@ services:
     image: nginx:alpine
     container_name: tenderplatform-frontend
     ports:
-      - "8080:80"
+      - "8085:80"
     volumes:
       - ./frontend:/usr/share/nginx/html:ro
     depends_on:
@@ -49,7 +49,7 @@ services:
     image: prom/prometheus:latest
     container_name: tenderplatform-prometheus
     ports:
-      - "9090:9090"
+      - "9095:9090"
     volumes:
       - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml:ro
 
@@ -57,7 +57,7 @@ services:
     image: grafana/grafana:latest
     container_name: tenderplatform-grafana
     ports:
-      - "3000:3000"
+      - "3005:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     depends_on:
